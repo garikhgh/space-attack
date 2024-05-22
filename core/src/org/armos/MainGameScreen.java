@@ -159,6 +159,11 @@ public class MainGameScreen implements Screen {
             if (asteroid.getCollisionRect().collidesWith(playerRect)) {
                 asteroidToRemove.add(asteroid);
                 health -= 0.1f;
+                if (health <= 0 ) {
+                    this.dispose();
+                    this.game.setScreen(new GameOverScreen(this.game, score));
+                    return;
+                }
             }
         }
 
