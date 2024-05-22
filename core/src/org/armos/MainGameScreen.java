@@ -9,6 +9,7 @@ import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.ScreenUtils;
 import org.armos.constants.Constants;
 import org.armos.entities.Asteroid;
@@ -61,6 +62,8 @@ public class MainGameScreen implements Screen {
     CollisionRect playerRect;
     float health = 1; // 0 means dead 1 means health
 
+    boolean showControls = true;
+
     public MainGameScreen(SpaceAttack spaceAttack) {
         this.scoreFont = new BitmapFont(Gdx.files.internal("font/score.fnt"));
         this.game = spaceAttack;
@@ -102,6 +105,8 @@ public class MainGameScreen implements Screen {
         // Shooting
         if ((isLeft() || isRight()) || Gdx.input.isKeyPressed(Input.Keys.SPACE) && shootTimer >= SHOOT_WAIT_TIME) {
             shootTimer=0;
+            // stop showing controls
+            showControls = false;
             int offset= 4;
 
             if (roll == 1 || roll ==3)
@@ -262,17 +267,25 @@ public class MainGameScreen implements Screen {
         this.game.batch.setColor(Color.WHITE);
         this.game.batch.draw(keyFrame, x, y, SHIP_WIDTH, SHIP_HEIGHT);
 
-        if (SpaceAttack.IS_MOBILE) {
-            //draw left
-            game.batch.setColor(Color.RED);
-            game.batch.draw(controls, 0, 0, (float) WIDTH / 2, (float) HEIGHT /2, 0, 0, WIDTH, HEIGHT, false, false);
+        // draw controls constructions
+        if (showControls){
+            if (SpaceAttack.IS_MOBILE) {
+                //draw left
+                game.batch.setColor(Color.RED);
+                game.batch.draw(controls, 0, 0, (float) WIDTH / 2, (float) HEIGHT /2, 0, 0, WIDTH, HEIGHT, false, false);
 
-            //draw right
-            game.batch.setColor(Color.BLUE);
-            game.batch.draw(controls, (float) WIDTH / 2, 0, (float) WIDTH / 2, (float) HEIGHT / 2, 0, 0, WIDTH, HEIGHT, true, false);
+                //draw right
+                game.batch.setColor(Color.BLUE);
+                game.batch.draw(controls, (float) WIDTH / 2, 0, (float) WIDTH / 2, (float) HEIGHT / 2, 0, 0, WIDTH, HEIGHT, true, false);
 
-            game.batch.setColor(Color.WHITE);
+                game.batch.setColor(Color.WHITE);
+            } else {
+                GlyphLayout instructionsLayout = new GlyphLayout(scoreFont, "Left/Right" +"\n"+ "to Shoot", Color.WHITE, WIDTH - 50, Align.left, true);
+                scoreFont.draw(game.batch, instructionsLayout, WIDTH/2- instructionsLayout.width, 150);
+            }
+
         }
+
         this.game.batch.end();
 
     }
