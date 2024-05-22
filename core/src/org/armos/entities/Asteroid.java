@@ -1,4 +1,4 @@
-package org.armos;
+package org.armos.entities;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
@@ -11,8 +11,8 @@ import java.util.Random;
 public class Asteroid {
     public static final int SPEED_ASTEROID = 5;
 
-    public static final int ASTEROID_WIDTH = 48;
-    public static final int ASTEROID_HEIGHT = 48;
+    public static final int ASTEROID_WIDTH = 36;
+    public static final int ASTEROID_HEIGHT = 36;
     private static Texture texture;
     float x, y;
     public boolean remove = false;
@@ -41,4 +41,11 @@ public class Asteroid {
         return this.collisionRect;
     }
 
+    public float getX() {
+        return x;
+    }
+
+    public float getY() {
+        return y;
+    }
 }

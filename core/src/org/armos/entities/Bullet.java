@@ -1,4 +1,4 @@
-package org.armos;
+package org.armos.entities;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
@@ -7,7 +7,7 @@ import org.armos.tools.CollisionRect;
 
 public class Bullet {
     public static final int SPEED_BULLET = 80;
-    public static final int BULLET_WIDTH = 3;
+    public static final int BULLET_WIDTH = 9;
     public static final int BULLET_HEIGHT = 12;
 
 

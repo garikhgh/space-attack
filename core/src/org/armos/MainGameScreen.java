@@ -5,14 +5,19 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.utils.ScreenUtils;
+import org.armos.entities.Asteroid;
+import org.armos.entities.Bullet;
+import org.armos.entities.Explosion;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-import static org.armos.Constants.SHIP_WIDTH;
 import static org.armos.Constants.WIDTH;
 
 public class MainGameScreen implements Screen {
@@ -32,6 +37,7 @@ public class MainGameScreen implements Screen {
     Animation[] rolls;
     List<Bullet> bulletList;
     List<Asteroid> asteroidList;
+    List<Explosion> explosionList;
 
     private float rollTimer;
     private float y;
@@ -40,19 +46,23 @@ public class MainGameScreen implements Screen {
     private float shootTimer;
     private float asteroidSpawnTimer;
     int roll;
+    int score = 0;
     Random random;
 
 
 
 //    Texture img;
     SpaceAttack game;
+    BitmapFont scoreFont;
 
     public MainGameScreen(SpaceAttack spaceAttack) {
+        this.scoreFont = new BitmapFont(Gdx.files.internal("font/score.fnt"));
         this.game = spaceAttack;
         y = 15;
         x = (float) WIDTH / 2 - (float) SHIP_WIDTH / 2;
         bulletList = new ArrayList<>();
         asteroidList = new ArrayList<>();
+        explosionList = new ArrayList<>();
         roll = 2;
         rollTimer = 0;
         shootTimer = 0;
@@ -105,6 +115,17 @@ public class MainGameScreen implements Screen {
             }
         }
 
+        // UpdateExplosion
+        List<Explosion> explosionsToRemove = new ArrayList<>();
+        for (Explosion explosion : explosionList) {
+            explosion.update(delta);
+            if (explosion.remove) {
+                explosionsToRemove.add(explosion);
+            }
+        }
+        explosionList.removeAll(explosionsToRemove);
+
+
         //Update Bullet
         List<Bullet> bulletsToRemove = new ArrayList<>();
         for (Bullet bullet : bulletList) {
@@ -120,11 +141,17 @@ public class MainGameScreen implements Screen {
                     // collision occured;
                     bulletsToRemove.add(bullet);
                     asteroidToRemove.add(asteroid);
+                    explosionList.add(new Explosion(asteroid.getX(), asteroid.getY()));
+                    score +=100;
                 }
             }
         }
+
+
         asteroidList.removeAll(asteroidToRemove);
         bulletList.removeAll(bulletsToRemove);
+
+
         //Movement
         stateTime += delta;
         if (Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
@@ -181,12 +208,19 @@ public class MainGameScreen implements Screen {
 
         ScreenUtils.clear(0, 0, 0, 1);
         this.game.batch.begin();
+
+        GlyphLayout scoreLayout = new GlyphLayout(scoreFont, "" + score);
+        scoreFont.draw(this.game.batch, scoreLayout, (float) Gdx.graphics.getWidth() / 2 - scoreLayout.width, Gdx.graphics.getHeight() - scoreLayout.height - 10);
+
         TextureRegion keyFrame = (TextureRegion) rolls[roll].getKeyFrame(stateTime, true);
         for (Bullet bullet : bulletList) {
             bullet.render(this.game.batch);
         }
         for (Asteroid asteroid: asteroidList){
             asteroid.render(this.game.batch);
+        }
+        for (Explosion explosion : explosionList) {
+            explosion.render(this.game.batch);
         }
         this.game.batch.draw(keyFrame, x, y, SHIP_WIDTH, SHIP_HEIGHT);
         this.game.batch.end();
