@@ -10,6 +10,7 @@ import com.badlogic.gdx.utils.ScreenUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import static org.armos.Constants.SHIP_WIDTH;
 import static org.armos.Constants.WIDTH;
@@ -24,16 +25,22 @@ public class MainGameScreen implements Screen {
     public static final int SHIP_HEIGHT = SHIP_HEIGHT_PIXEL * 3;
     public static final float ROLL_TIMER_SWITCH_TIME = 0.15f;
     public static final float SHOOT_WAIT_TIME = 0.3f;
+    public static final float MIN_ASTEROID_SPAWN_TIME = 0.3f;
+    public static final float MAX_ASTEROID_SPAWN_TIME = 0.6f;
+
 
     Animation[] rolls;
     List<Bullet> bulletList;
+    List<Asteroid> asteroidList;
 
     private float rollTimer;
     private float y;
     private float x;
     private float stateTime;
     private float shootTimer;
+    private float asteroidSpawnTimer;
     int roll;
+    Random random;
 
 
 
@@ -45,9 +52,12 @@ public class MainGameScreen implements Screen {
         y = 15;
         x = (float) WIDTH / 2 - (float) SHIP_WIDTH / 2;
         bulletList = new ArrayList<>();
+        asteroidList = new ArrayList<>();
         roll = 2;
         rollTimer = 0;
         shootTimer = 0;
+        random = new Random();
+        asteroidSpawnTimer = random.nextFloat() *  (MAX_ASTEROID_SPAWN_TIME - MIN_ASTEROID_SPAWN_TIME) + MIN_ASTEROID_SPAWN_TIME;
         rolls = new Animation[5];
         TextureRegion[][] rollSpriteSheet = TextureRegion.split(new Texture("ship.png"), SHIP_WIDTH_PIXEL, SHIP_HEIGHT_PIXEL);
         rolls[0] = new Animation<>(SHIP_ANIMATION_SPEED, rollSpriteSheet[2]);
@@ -80,6 +90,21 @@ public class MainGameScreen implements Screen {
             bulletList.add(new Bullet(x + SHIP_WIDTH-offset));
 
         }
+        //Asteroid spawn code
+        asteroidSpawnTimer -= delta;
+        if (asteroidSpawnTimer  <= 0) {
+            asteroidSpawnTimer = random.nextFloat() *  (MAX_ASTEROID_SPAWN_TIME - MIN_ASTEROID_SPAWN_TIME) + MIN_ASTEROID_SPAWN_TIME;
+            asteroidList.add(new Asteroid(random.nextInt(Gdx.graphics.getWidth()-Asteroid.ASTEROID_WIDTH)));
+        }
+
+        List<Asteroid> asteroidToRemove = new ArrayList<>();
+        for (Asteroid asteroid: asteroidList) {
+            asteroid.update(delta);
+            if (asteroid.remove) {
+                asteroidToRemove.add(asteroid);
+            }
+        }
+
         //Update Bullet
         List<Bullet> bulletsToRemove = new ArrayList<>();
         for (Bullet bullet : bulletList) {
@@ -88,6 +113,17 @@ public class MainGameScreen implements Screen {
                 bulletsToRemove.add(bullet);
             }
         }
+        //After all updates, check for collisions
+        for (Bullet bullet : bulletList) {
+            for (Asteroid asteroid : asteroidList) {
+                if (bullet.getCollisionRect().collidesWith(asteroid.getCollisionRect())) {
+                    // collision occured;
+                    bulletsToRemove.add(bullet);
+                    asteroidToRemove.add(asteroid);
+                }
+            }
+        }
+        asteroidList.removeAll(asteroidToRemove);
         bulletList.removeAll(bulletsToRemove);
         //Movement
         stateTime += delta;
@@ -148,6 +184,9 @@ public class MainGameScreen implements Screen {
         TextureRegion keyFrame = (TextureRegion) rolls[roll].getKeyFrame(stateTime, true);
         for (Bullet bullet : bulletList) {
             bullet.render(this.game.batch);
+        }
+        for (Asteroid asteroid: asteroidList){
+            asteroid.render(this.game.batch);
         }
         this.game.batch.draw(keyFrame, x, y, SHIP_WIDTH, SHIP_HEIGHT);
         this.game.batch.end();
