@@ -35,8 +35,8 @@ public class MainGameScreen implements Screen {
     public static final int SHIP_HEIGHT = SHIP_HEIGHT_PIXEL * 3;
     public static final float ROLL_TIMER_SWITCH_TIME = 0.15f;
     public static final float SHOOT_WAIT_TIME = 0.3f;
-    public static final float MIN_ASTEROID_SPAWN_TIME = 0.3f;
-    public static final float MAX_ASTEROID_SPAWN_TIME = 0.6f;
+    public static final float MIN_ASTEROID_SPAWN_TIME = 0.03f;
+    public static final float MAX_ASTEROID_SPAWN_TIME = 0.1f;
 
 
     Animation[] rolls;
