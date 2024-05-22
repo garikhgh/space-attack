@@ -8,6 +8,9 @@ import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.utils.ScreenUtils;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static org.armos.Constants.SHIP_WIDTH;
 import static org.armos.Constants.WIDTH;
 
@@ -22,6 +25,7 @@ public class MainGameScreen implements Screen {
     public static final float ROLL_TIMER_SWITCH_TIME = 0.15f;
 
     Animation[] rolls;
+    List<Bullet> bulletList;
 
     private float rollTimer;
     private float y;
@@ -38,6 +42,7 @@ public class MainGameScreen implements Screen {
         this.game = spaceAttack;
         y = 15;
         x = (float) WIDTH / 2 - (float) SHIP_WIDTH / 2;
+        bulletList = new ArrayList<>();
         roll = 2;
         rollTimer = 0;
         rolls = new Animation[5];
@@ -57,6 +62,21 @@ public class MainGameScreen implements Screen {
     @Override
     public void render(float delta) {
 
+        // Shooting
+        if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
+            bulletList.add(new Bullet(x + 4));
+            bulletList.add(new Bullet(x + SHIP_WIDTH-4));
+        }
+        //Update Bullet
+        List<Bullet> bulletsToRemove = new ArrayList<>();
+        for (Bullet bullet : bulletList) {
+            bullet.update(delta);
+            if (bullet.remove) {
+                bulletsToRemove.add(bullet);
+            }
+        }
+        bulletList.removeAll(bulletsToRemove);
+        //Movement
         stateTime += delta;
         if (Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
             x -= SPEED + Gdx.graphics.getDeltaTime();
@@ -71,7 +91,7 @@ public class MainGameScreen implements Screen {
             }
             rollTimer -= Gdx.graphics.getDeltaTime();
             if (Math.abs(rollTimer) > ROLL_TIMER_SWITCH_TIME && roll > 0) {
-                rollTimer = 0;
+                rollTimer -= ROLL_TIMER_SWITCH_TIME;
                 roll--;
             }
         } else {
@@ -79,7 +99,7 @@ public class MainGameScreen implements Screen {
                 // update roll to make it go back to center
                 rollTimer += Gdx.graphics.getDeltaTime();
                 if (Math.abs(rollTimer) > ROLL_TIMER_SWITCH_TIME && roll < 4);{
-                    rollTimer = 0;
+                    rollTimer -= ROLL_TIMER_SWITCH_TIME;
                     roll++;
                 }
             }
@@ -89,16 +109,22 @@ public class MainGameScreen implements Screen {
             if (x + SHIP_WIDTH > Gdx.graphics.getWidth()) {
                 x = Gdx.graphics.getWidth() - SHIP_WIDTH;
             }
+
+            if (Gdx.input.isKeyJustPressed(Input.Keys.RIGHT) && !Gdx.input.isKeyJustPressed(Input.Keys.LEFT) && roll > 0) {
+                rollTimer = 0;
+                roll --;
+            }
+
             rollTimer += Gdx.graphics.getDeltaTime();
             if (Math.abs(rollTimer) > ROLL_TIMER_SWITCH_TIME && roll < 4) {
-                rollTimer = 0;
+                rollTimer -= ROLL_TIMER_SWITCH_TIME;
                 roll++;
             }
         } else {
             if (roll > 2){
                 rollTimer -= Gdx.graphics.getDeltaTime();
                 if (Math.abs(rollTimer) > ROLL_TIMER_SWITCH_TIME && roll > 0){
-                    rollTimer = 0;
+                    rollTimer -= ROLL_TIMER_SWITCH_TIME;
                     roll--;
                 }
             }
@@ -107,6 +133,9 @@ public class MainGameScreen implements Screen {
         ScreenUtils.clear(0, 0, 0, 1);
         this.game.batch.begin();
         TextureRegion keyFrame = (TextureRegion) rolls[roll].getKeyFrame(stateTime, true);
+        for (Bullet bullet : bulletList) {
+            bullet.render(this.game.batch);
+        }
         this.game.batch.draw(keyFrame, x, y, SHIP_WIDTH, SHIP_HEIGHT);
         this.game.batch.end();
 
