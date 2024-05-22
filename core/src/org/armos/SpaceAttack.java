@@ -9,6 +9,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
+import org.armos.tools.GameCamera;
 import org.armos.tools.ScrollingBackground;
 
 import static org.armos.constants.Constants.HEIGHT;
@@ -21,12 +22,12 @@ public class SpaceAttack extends Game {
 	Texture img;
 
 	public ScrollingBackground scrollingBackground;
-	private OrthographicCamera cam;
-	private StretchViewport viewport;
+	GameCamera camera;
 	
 	@Override
 	public void create () {
 
+		camera = new GameCamera(WIDTH, HEIGHT);
 		if (Gdx.app.getType() == Application.ApplicationType.Android || Gdx.app.getType() == Application.ApplicationType.iOS) {
 			IS_MOBILE = true;
 		}
@@ -34,16 +35,11 @@ public class SpaceAttack extends Game {
 		this.batch = new SpriteBatch();
 		this.setScreen(new MainMenuScreen(this));
 
-		this.cam = new OrthographicCamera();
-		this.viewport = new StretchViewport(WIDTH, HEIGHT, this.cam);
-		this.viewport.apply();
-		this.cam.position.set(WIDTH / 2, HEIGHT / 2, 0);
-		cam.update();
 	}
 
 	@Override
 	public void render () {
-		batch.setProjectionMatrix(this.cam.combined);
+		batch.setProjectionMatrix(this.camera.combined());
 		super.render();
 	}
 	
@@ -55,7 +51,7 @@ public class SpaceAttack extends Game {
 
 	@Override
 	public void resize(int width, int height) {
-		this.viewport.update(width, height);
+		this.camera.update(width, height);
 		this.scrollingBackground.resize(width, height);
 		super.resize(width, height);
 	}

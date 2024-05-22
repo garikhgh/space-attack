@@ -4,6 +4,8 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
+import static org.armos.constants.Constants.WIDTH;
+
 public class ScrollingBackground {
 
     public static final int DEFAULT_SPEED = 200;
@@ -54,8 +56,8 @@ public class ScrollingBackground {
         if (y1 + image.getHeight() * imageScale <= 0) {
             y2 = y1 + image.getHeight() * imageScale;
         }
-        batch.draw(image, 0, y1, Gdx.graphics.getWidth(), image.getHeight() * imageScale);
-        batch.draw(image, 0, y2, Gdx.graphics.getWidth(), image.getHeight() * imageScale);
+        batch.draw(image, 0, y1, WIDTH, image.getHeight() * imageScale);
+        batch.draw(image, 0, y2, WIDTH, image.getHeight() * imageScale);
 
     }
 

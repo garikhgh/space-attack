@@ -10,6 +10,9 @@ import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.ScreenUtils;
 
+import static org.armos.constants.Constants.HEIGHT;
+import static org.armos.constants.Constants.WIDTH;
+
 public class GameOverScreen implements Screen {
     private static final int BANNER_WIDTH = 350;
     private static final int BANNER_HEIGHT = 100;

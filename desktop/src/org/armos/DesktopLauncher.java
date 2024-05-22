@@ -14,7 +14,7 @@ public class DesktopLauncher {
 		config.setForegroundFPS(60);
 		config.setWindowedMode(WIDTH, HEIGHT);
 		config.setTitle("Space Attack");
-		config.setResizable(false);
+//		config.setResizable(false);
 		new Lwjgl3Application(new SpaceAttack(), config);
 	}
 }

@@ -15,6 +15,7 @@ import org.armos.entities.Asteroid;
 import org.armos.entities.Bullet;
 import org.armos.entities.Explosion;
 import org.armos.tools.CollisionRect;
+import org.armos.tools.GameCamera;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -116,7 +117,7 @@ public class MainGameScreen implements Screen {
         asteroidSpawnTimer -= delta;
         if (asteroidSpawnTimer  <= 0) {
             asteroidSpawnTimer = random.nextFloat() *  (MAX_ASTEROID_SPAWN_TIME - MIN_ASTEROID_SPAWN_TIME) + MIN_ASTEROID_SPAWN_TIME;
-            asteroidList.add(new Asteroid(random.nextInt(Gdx.graphics.getWidth()-Asteroid.ASTEROID_WIDTH)));
+            asteroidList.add(new Asteroid(random.nextInt(WIDTH-Asteroid.ASTEROID_WIDTH)));
         }
 
         List<Asteroid> asteroidToRemove = new ArrayList<>();
@@ -236,7 +237,7 @@ public class MainGameScreen implements Screen {
         this.game.scrollingBackground.updateAndRender(delta, game.batch);
 
         GlyphLayout scoreLayout = new GlyphLayout(scoreFont, "" + score);
-        scoreFont.draw(this.game.batch, scoreLayout, (float) Gdx.graphics.getWidth() / 2 - scoreLayout.width, Gdx.graphics.getHeight() - scoreLayout.height - 10);
+        scoreFont.draw(this.game.batch, scoreLayout, (float) WIDTH / 2 - scoreLayout.width, HEIGHT - scoreLayout.height - 10);
 
         TextureRegion keyFrame = (TextureRegion) rolls[roll].getKeyFrame(stateTime, true);
         for (Bullet bullet : bulletList) {
@@ -257,18 +258,18 @@ public class MainGameScreen implements Screen {
         } else {
             this.game.batch.setColor(Color.RED);
         }
-        this.game.batch.draw(blank, 0, 0, Gdx.graphics.getWidth() * health, 5);
+        this.game.batch.draw(blank, 0, 0, WIDTH * health, 5);
         this.game.batch.setColor(Color.WHITE);
         this.game.batch.draw(keyFrame, x, y, SHIP_WIDTH, SHIP_HEIGHT);
 
         if (SpaceAttack.IS_MOBILE) {
             //draw left
             game.batch.setColor(Color.RED);
-            game.batch.draw(controls, 0, 0, (float) WIDTH / 2, HEIGHT /2, 0, 0, WIDTH, HEIGHT, false, false);
+            game.batch.draw(controls, 0, 0, (float) WIDTH / 2, (float) HEIGHT /2, 0, 0, WIDTH, HEIGHT, false, false);
 
             //draw right
             game.batch.setColor(Color.BLUE);
-            game.batch.draw(controls, WIDTH/2, 0, (float) WIDTH / 2, HEIGHT /2, 0, 0, WIDTH, HEIGHT, true, false);
+            game.batch.draw(controls, (float) WIDTH / 2, 0, (float) WIDTH / 2, (float) HEIGHT / 2, 0, 0, WIDTH, HEIGHT, true, false);
 
             game.batch.setColor(Color.WHITE);
         }
