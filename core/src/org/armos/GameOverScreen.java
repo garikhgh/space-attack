@@ -43,6 +43,8 @@ public class GameOverScreen implements Screen {
     public void render(float delta) {
         ScreenUtils.clear(0, 0, 0, 1);
         this.game.batch.begin();
+        this.game.scrollingBackground.updateAndRender(delta, this.game.batch);
+
         this.game.batch.draw(gameOverBanner, (float) Gdx.graphics.getWidth() / 2 - (float) BANNER_WIDTH / 2, Gdx.graphics.getHeight() - BANNER_HEIGHT - 15, BANNER_WIDTH, BANNER_HEIGHT);
 
         GlyphLayout scoreLayout = new GlyphLayout(scoreFont, "Score: \n" + score, Color.WHITE, 0, Align.left, false);

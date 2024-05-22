@@ -5,14 +5,18 @@ import com.badlogic.gdx.Game;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.ScreenUtils;
+import org.armos.tools.ScrollingBackground;
 
 public class SpaceAttack extends Game {
 	SpriteBatch batch;
 	Texture img;
+
+	public ScrollingBackground scrollingBackground;
 	
 	@Override
 	public void create () {
-		batch = new SpriteBatch();
+		this.scrollingBackground = new ScrollingBackground();
+		this.batch = new SpriteBatch();
 		this.setScreen(new MainMenuScreen(this));
 	}
 
@@ -25,5 +29,11 @@ public class SpaceAttack extends Game {
 	public void dispose () {
 		batch.dispose();
 		img.dispose();
+	}
+
+	@Override
+	public void resize(int width, int height) {
+		this.scrollingBackground.resize(width, height);
+		super.resize(width, height);
 	}
 }
