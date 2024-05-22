@@ -2,10 +2,9 @@ package org.armos;
 
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
-import org.armos.SpaceAttack;
 
-import static org.armos.Constants.HEIGHT;
-import static org.armos.Constants.WIDTH;
+import static org.armos.constants.Constants.HEIGHT;
+import static org.armos.constants.Constants.WIDTH;
 
 // Please note that on macOS your application needs to be started with the -XstartOnFirstThread JVM argument
 public class DesktopLauncher {

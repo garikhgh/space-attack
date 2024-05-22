@@ -9,8 +9,8 @@ import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.utils.ScreenUtils;
+import org.armos.constants.Constants;
 import org.armos.entities.Asteroid;
 import org.armos.entities.Bullet;
 import org.armos.entities.Explosion;
@@ -20,7 +20,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-import static org.armos.Constants.WIDTH;
+import static org.armos.constants.Constants.HEIGHT;
+import static org.armos.constants.Constants.WIDTH;
 
 public class MainGameScreen implements Screen {
 
@@ -53,7 +54,7 @@ public class MainGameScreen implements Screen {
     Random random;
 
 
-//    Texture img;
+    Texture controls;
     SpaceAttack game;
     BitmapFont scoreFont;
     CollisionRect playerRect;
@@ -82,6 +83,10 @@ public class MainGameScreen implements Screen {
         rolls[3] = new Animation<>(SHIP_ANIMATION_SPEED, rollSpriteSheet[3]);
         rolls[4] = new Animation<>(SHIP_ANIMATION_SPEED, rollSpriteSheet[4]);
         this.game.scrollingBackground.setSpeedFixed(true);
+
+        if (SpaceAttack.IS_MOBILE) {
+            controls = new Texture("controls.png");
+        }
     }
 
     @Override
@@ -94,7 +99,7 @@ public class MainGameScreen implements Screen {
 
         shootTimer += delta;
         // Shooting
-        if (Gdx.input.isKeyPressed(Input.Keys.SPACE) && shootTimer >= SHOOT_WAIT_TIME) {
+        if ((isLeft() || isRight()) || Gdx.input.isKeyPressed(Input.Keys.SPACE) && shootTimer >= SHOOT_WAIT_TIME) {
             shootTimer=0;
             int offset= 4;
 
@@ -174,14 +179,14 @@ public class MainGameScreen implements Screen {
 
         //Movement
         stateTime += delta;
-        if (Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
+        if (isLeft()) {
             x -= SPEED + Gdx.graphics.getDeltaTime();
             if (x < 0){
                 x = 0;
             }
 
             // update roll if button just clicked;
-            if (Gdx.input.isKeyJustPressed(Input.Keys.LEFT) && !Gdx.input.isKeyJustPressed(Input.Keys.RIGHT) && roll > 0) {
+            if (isJustLeft() && !isJustRight() && roll > 0) {
                 rollTimer = 0;
                 roll --;
             }
@@ -200,13 +205,13 @@ public class MainGameScreen implements Screen {
                 }
             }
         }
-        if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
+        if (isRight()) {
             x += SPEED + Gdx.graphics.getDeltaTime();
             if (x + SHIP_WIDTH > Gdx.graphics.getWidth()) {
                 x = Gdx.graphics.getWidth() - SHIP_WIDTH;
             }
 
-            if (Gdx.input.isKeyJustPressed(Input.Keys.RIGHT) && !Gdx.input.isKeyJustPressed(Input.Keys.LEFT) && roll > 0) {
+            if (isJustRight()&& !isJustLeft() && roll > 0) {
                 rollTimer = 0;
                 roll --;
             }
@@ -256,7 +261,37 @@ public class MainGameScreen implements Screen {
         this.game.batch.setColor(Color.WHITE);
         this.game.batch.draw(keyFrame, x, y, SHIP_WIDTH, SHIP_HEIGHT);
 
+        if (SpaceAttack.IS_MOBILE) {
+            //draw left
+            game.batch.setColor(Color.RED);
+            game.batch.draw(controls, 0, 0, (float) WIDTH / 2, HEIGHT /2, 0, 0, WIDTH, HEIGHT, false, false);
+
+            //draw right
+            game.batch.setColor(Color.BLUE);
+            game.batch.draw(controls, WIDTH/2, 0, (float) WIDTH / 2, HEIGHT /2, 0, 0, WIDTH, HEIGHT, true, false);
+
+            game.batch.setColor(Color.WHITE);
+        }
         this.game.batch.end();
+
+    }
+
+    private boolean isRight() {
+        return Gdx.input.isKeyPressed(Input.Keys.RIGHT) || (Gdx.input.isTouched() && Gdx.input.getX() >= WIDTH / 2);
+    }
+
+    private boolean isLeft() {
+        return Gdx.input.isKeyPressed(Input.Keys.LEFT) || (Gdx.input.isTouched() && Gdx.input.getX() < WIDTH / 2);
+
+    }
+
+    private boolean isJustRight() {
+        return Gdx.input.isKeyJustPressed(Input.Keys.RIGHT) || (Gdx.input.justTouched() && Gdx.input.getX() >= WIDTH / 2);
+
+    }
+
+    private boolean isJustLeft() {
+        return Gdx.input.isKeyJustPressed(Input.Keys.RIGHT) || (Gdx.input.justTouched() && Gdx.input.getX() < WIDTH / 2);
 
     }
 

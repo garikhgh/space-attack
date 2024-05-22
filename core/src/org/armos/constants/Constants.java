@@ -1,4 +1,4 @@
-package org.armos;
+package org.armos.constants;
 
 public class Constants {
     private Constants(){}

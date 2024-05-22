@@ -5,8 +5,8 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.utils.ScreenUtils;
 import org.armos.tools.ScrollingBackground;
 
-import static org.armos.Constants.HEIGHT;
-import static org.armos.Constants.WIDTH;
+import static org.armos.constants.Constants.HEIGHT;
+import static org.armos.constants.Constants.WIDTH;
 
 public class MainMenuScreen implements Screen {
 
